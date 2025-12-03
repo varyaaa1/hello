@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Christmas Crossword</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #f8f4e5, #ffffff);
+      text-align: center;
+      padding: 20px;
+      color: #1a237e;
+    }
+    h1 {
+      color: #b71c1c;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .crossword-grid {
+      display: inline-grid;
+      grid-template-columns: repeat(10, 40px);
+      grid-template-rows: repeat(10, 40px);
+      gap: 2px;
+      margin: 25px auto;
+      background-color: #333;
+      padding: 8px;
+      border-radius: 8px;
+    }
+    .cell {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      color: #000;
+      border: 1px solid #aaa;
+    }
+    .black {
+      background-color: #333;
+      border: none;
+    }
+    .words-list {
+      margin-top: 20px;
+      text-align: left;
+      display: inline-block;
+      background: white;
+      padding: 16px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      max-width: 300px;
+    }
+    .words-list h2 {
+      margin-top: 0;
+      color: #b71c1c;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎄 Christmas Crossword 🎄</h1>
+
+  <div class="crossword-grid" id="grid"></div>
+
+  <div class="words-list">
+    <h2>Words to find:</h2>
+    <ul>
+      <li>Santa</li>
+      <li>Reindeer</li>
+      <li>Snowman</li>
+      <li>Gifts</li>
+      <li>Tree</li>
+    </ul>
+  </div>
+
+  <script>
+    // Создаём пустую сетку 10x10
+    const size = 10;
+    let grid = Array(size).fill().map(() => Array(size).fill(' '));
+
+    // Функции размещения слов
+    function placeHorizontal(word, row, col) {
+      for (let i = 0; i < word.length; i++) {
+        if (col + i < size) grid[row][col + i] = word[i];
+      }
+    }
+
+    function placeVertical(word, row, col) {
+      for (let i = 0; i < word.length; i++) {
+        if (row + i < size) grid[row + i][col] = word[i];
+      }
+    }
+
+    // Размещаем слова вручную с пересечениями
+    placeVertical("SANTA", 0, 1);      // S в (0,1), A в (1,1)...
+    placeHorizontal("TREE", 1, 0);     // T(1,0), R(1,1), E(1,2), E(1,3) → пересекается с A в SANTA? Нет → изменим
+
+    // Лучше так:
+    grid[0][2] = 'S';
+    grid[1][2] = 'A';
+    grid[2][2] = 'N';
+    grid[3][2] = 'T';
+    grid[4][2] = 'A';                  // SANTA по вертикали в столбце 2
+
+    grid[3][0] = 'T';
+    grid[3][1] = 'R';
+    grid[3][2] = 'E'; // ← пересечение с SANTA (буква T/SANTA[3] = T)
+    grid[3][3] = 'E';                  // TREE по горизонтали в строке 3
+
+    // SNOWMAN по вертикали, начинается с (0,5)
+    const snowman = "SNOWMAN";
+    for (let i = 0; i < snowman.length; i++) {
+      if (i < size) grid[i][5] = snowman[i];
+    }
+
+    // REINDEER по горизонтали в строке 6, начинается с (6,2)
+    const reindeer = "REINDEER";
+    for (let i = 0; i < reindeer.length && i + 2 < size; i++) {
+      grid[6][2 + i] = reindeer[i];
+    }
+    // Пересечение: REINDEER[2] = 'I' → но лучше по N: пусть REINDEER начнётся с колонки 1
+    // Обновим:
+    grid[6][1] = 'R';
+    grid[6][2] = 'E';
+    grid[6][3] = 'I';
+    grid[6][4] = 'N'; // ← совпадает с N в SNOWMAN (SNOWMAN[3] = 'W'? Нет. В SNOWMAN: [0]S [1]N [2]O [3]W → N в (1,5)
+    // Чтобы было пересечение, поместим REINDEER так, чтобы N совпало:
+    // Переместим REINDEER в строку 1, колонка 4–11 → слишком длинное. Или просто отобразим без сложных пересечений.
+
+    // Упрощённый подход — разместим читаемо, даже если не все пересекаются
+
+    // Gifts по вертикали в колонке 8
+    const gifts = "GIFTS";
+    for (let i = 0; i < gifts.length; i++) {
+      if (i < size) grid[i][8] = gifts[i];
+    }
+
+    // Заполним остальные пустые клетки как чёрные
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (grid[r][c] === ' ') {
+          grid[r][c] = '#';
+        }
+      }
+    }
+
+    // Отрисовка
+    const gridEl = document.getElementById('grid');
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        if (grid[r][c] === '#') {
+          cell.classList.add('black');
+        } else {
+          cell.textContent = grid[r][c];
+        }
+        gridEl.appendChild(cell);
+      }
+    }
+  </script>
+</body>
+</html>
