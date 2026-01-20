@@ -70,3 +70,168 @@
 </body>
 </html>
 <img src="Icons/free-icon-christmas-decorations-2445049.png" alt="Рождественское украшение">
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>RSA: Обучение + Интерактив</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 15px;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .date-banner {
+      text-align: center;
+      background: #e6f0ff;
+      padding: 8px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #2c5aa0;
+    }
+    .step {
+      background: #f9f9ff;
+      border-left: 4px solid #4a6cf7;
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 0 6px 6px 0;
+    }
+    code {
+      background: #eee;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    .result {
+      font-weight: bold;
+      color: #2e8b57;
+    }
+    .interactive {
+      background: #f0f8ff;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 24px 0;
+      text-align: center;
+    }
+    input {
+      padding: 6px;
+      margin: 0 8px;
+      width: 80px;
+      text-align: center;
+    }
+    button {
+      padding: 6px 12px;
+      margin: 0 4px;
+      cursor: pointer;
+    }
+    #output {
+      margin-top: 12px;
+      font-weight: bold;
+      min-height: 1.5em;
+    }
+  </style>
+</head>
+<body>
+  <!-- Отображение даты -->
+  <div class="date-banner">
+    Сегодня: <span id="current-date"></span>
+  </div>
+
+  <h1>RSA: Учебный пример + Интерактив</h1>
+
+  <!-- Теоретическая часть -->
+  <div class="step">
+    <p><b>1. Выбираем простые числа:</b><br>
+       <code>p = 3</code>, <code>q = 5</code></p>
+  </div>
+
+  <div class="step">
+    <p><b>2. Вычисляем модуль:</b><br>
+       <code>n = p × q = 3 × 5 = 15</code></p>
+  </div>
+
+  <div class="step">
+    <p><b>3. Вычисляем функцию Эйлера:</b><br>
+       <code>φ(n) = (p−1)(q−1) = 2 × 4 = 8</code></p>
+  </div>
+
+  <div class="step">
+    <p><b>4. Выбираем открытую экспоненту:</b><br>
+       <code>e = 3</code> (взаимно простое с φ(n) = 8)</p>
+  </div>
+
+  <div class="step">
+    <p><b>5. Находим закрытую экспоненту d:</b><br>
+       Нужно: <code>(e × d) mod φ(n) = 1</code><br>
+       <code>(3 × d) mod 8 = 1</code> → <code>d = 3</code></p>
+  </div>
+
+  <div class="step">
+    <p><b>Ключи:</b><br>
+       Открытый ключ: <code>(n, e) = (15, 3)</code><br>
+       Закрытый ключ: <code>(n, d) = (15, 3)</code>
+    </p>
+  </div>
+
+  <div class="step">
+    <p><b>6. Пример шифрования (<code>m = 2</code>):</b><br>
+       <code>C = 2<sup>3</sup> mod 15 = 8</code></p>
+    <p><b>7. Пример расшифровки:</b><br>
+       <code>M = 8<sup>3</sup> mod 15 = 2</code> ✅</p>
+  </div>
+
+  <div class="step">
+    <p><b>В реальных системах:</b><br>
+       <code>n</code> — число из более чем <b>600 десятичных цифр</b> (2048+ бит).</p>
+  </div>
+
+  <!-- Интерактивная часть -->
+  <div class="interactive">
+    <h2>Попробуйте сами!</h2>
+    <p>Введите число от <code>0</code> до <code>14</code>:</p>
+    <input id="msg" type="number" min="0" max="14" value="2">
+    <br>
+    <button onclick="encrypt()">Зашифровать</button>
+    <button onclick="decrypt()">Расшифровать</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    // Устанавливаем дату: 20 января 2026 г.
+    document.getElementById('current-date').textContent = '20 января 2026 г.';
+
+    const n = 15, e = 3, d = 3;
+
+    function modPow(base, exp, mod) {
+      return Math.pow(base, exp) % mod;
+    }
+
+    function encrypt() {
+      const m = parseInt(document.getElementById('msg').value);
+      if (isNaN(m) || m < 0 || m >= n) {
+        document.getElementById('output').innerText = 'Ошибка: введите число от 0 до 14';
+        return;
+      }
+      const c = modPow(m, e, n);
+      document.getElementById('output').innerHTML = `Шифротекст: <b>${c}</b>`;
+    }
+
+    function decrypt() {
+      const c = parseInt(document.getElementById('msg').value);
+      if (isNaN(c) || c < 0 || c >= n) {
+        document.getElementById('output').innerText = 'Ошибка: введите число от 0 до 14';
+        return;
+      }
+      const m = modPow(c, d, n);
+      document.getElementById('output').innerHTML = `Расшифровано: <b>${m}</b>`;
+    }
+  </script>
+</body>
+</html>
