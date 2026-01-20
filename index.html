@@ -180,4 +180,50 @@
   </script>
 
 </body>
+<!-- Падающие снежинки -->
+<style>
+  .snowflake {
+    position: fixed;
+    top: -20px;
+    color: #fff;
+    font-size: 20px;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.7);
+    user-select: none;
+    z-index: 9999;
+    opacity: 0.8;
+    animation: fall linear infinite;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(100vh) rotate(360deg);
+    }
+  }
+</style>
+
+<script>
+  // Символы снежинок
+  const snowflakes = ['❄', '❅', '❆'];
+  const container = document.body;
+  const count = 40; // количество снежинок
+
+  for (let i = 0; i < count; i++) {
+    const snow = document.createElement('div');
+    snow.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+    snow.className = 'snowflake';
+
+    // Случайное положение по горизонтали
+    snow.style.left = Math.random() * 100 + 'vw';
+    // Случайный размер
+    snow.style.fontSize = (Math.random() * 14 + 12) + 'px';
+    // Случайная прозрачность
+    snow.style.opacity = Math.random() * 0.5 + 0.3;
+    // Случайная скорость (5–15 сек)
+    snow.style.animationDuration = (Math.random() * 10 + 5) + 's';
+    // Случайная задержка
+    snow.style.animationDelay = Math.random() * 5 + 's';
+
+    container.appendChild(snow);
+  }
+</script>
 </html>
